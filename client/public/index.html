@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>タスク一覧</title>
+  </head>
+  <body>
+    <h2>タスク一覧</h2>
+    <ul id="task-list">
+    </ul>
+
+    <script>
+      // 開始時に実行する
+      window.onload = async () => {
+        const response = await fetch("http://localhost:8000/list")
+        const json = await response?.json()
+        if (json && json["tasks"] !== undefined) {
+          for (const task of json["tasks"]) {
+            document.getElementById("task-list").innerHTML += `<a href="/task.html?task_id=${task["id"]}"><li>[${task["id"]}] ${task["title"]} ${task["completed"] ? "完了済" : "未完了"}</li></a>`
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

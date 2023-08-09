@@ -1,14 +1,32 @@
 import { serve } from "https://deno.land/std@0.180.0/http/server.ts"
 import { serveDir } from "https://deno.land/std@0.180.0/http/file_server.ts";
 
-import { getTaskList, getTaskById } from "./mySqlConnecter.js";
+import { getTaskList, getTaskById, insertTask, updateTask } from "./mySqlConnecter.js";
+
+const optionsResult = (message, status = 200) => {
+  return new Response(message, { status: status, headers: {
+    "Access-Control-Allow-Methods": "POST",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "*"
+  }})
+}
+
+const postResult = (message, status = 200) => {
+  return new Response(message, { status: status, headers: {
+    "Access-Control-Allow-Origin": "*",
+  }})
+}
 
 const messageToResult = (message, status = 200) => {
-  return new Response(message, { status: status })
+  return new Response(message, { status: status, headers: {
+    "Access-Control-Allow-Origin": "*",
+  }})
 }
 
 const jsonToResult = (json, status = 200) => {
-  return new Response(JSON.stringify(json), { status: status })
+  return new Response(JSON.stringify(json), { status: status, headers: {
+    "Access-Control-Allow-Origin": "*"
+  }})
 }
 
 serve(async (req) => {
@@ -37,6 +55,25 @@ serve(async (req) => {
 
   } else if (req.method === "POST") {
     // タスク新規作成
+    if (pathname === "/create") {
+      const json = await req.json()
+      if (json && json["title"] !== undefined) {
+        await insertTask(json["title"])
+      }
+      return postResult("success")
+    }
+
+    // タスクの完了
+    if (pathname === "/complete") {
+      const json = await req.json()
+      if (json) {
+        await updateTask(json["id"], 1)
+      }
+      return postResult("success")
+    }
+
+  } else if (req.method === "OPTIONS") {
+    return optionsResult("success")
   }
 
   return serveDir(req, {

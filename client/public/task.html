@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+  </head>
+  <body>
+    <span id="title" style="font-size: 30px;"></span>
+    <br>
+    
+    <span id="completed"></span>
+    <br>
+    
+    <form id="complete-button-form">
+      <input id="id" type="hidden" name="id">
+      <button id="complete-button" type="button">完了</button>
+    </form>
+
+    <script>
+      window.onload = async () => {
+        const selfUrl = new URL(window.location.href);
+        const taskId = selfUrl?.searchParams?.get("task_id")
+
+        const response = await fetch(`http://localhost:8000/task?task_id=${taskId}`)
+        const json = await response?.json()
+
+        if (json) {
+          document.getElementsByTagName("title")[0].innerText = `タスク: ${json["title"]}`
+          document.getElementById("id").value = json["id"]
+          document.getElementById("title").innerText = json["title"]
+          document.getElementById("completed").innerText = json["completed"] === 1 ? "完了済" : "未完了"
+
+          if (json["completed"] === 1) {
+            document.getElementById("complete-button-form").remove()
+          }
+        }
+      }
+
+      document.getElementById("complete-button").onclick = async (event) => {
+        const completeButtonForm = document.getElementById("complete-button-form")
+
+        const formData = new FormData(completeButtonForm)
+        const data = Object.fromEntries(formData.entries())
+
+        try {
+          await fetch("http://localhost:8000/complete", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+          })
+          window.location.reload()
+        } catch (e) {
+          console.log("ERROR: " + e)
+        }
+      }
+    </script>
+  </body>
+</html>
