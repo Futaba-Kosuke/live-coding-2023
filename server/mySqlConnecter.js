@@ -28,7 +28,7 @@ export const getTaskById = async (taskId) => {
 } 
 
 // タスク追加
-export const insertTask = async (json) => {
+export const insertTask = async (title) => {
   const now = new Date()
   const insertResult = await mySqlClient.execute(`
     INSERT INTO task (
@@ -38,7 +38,7 @@ export const insertTask = async (json) => {
     );
   `, [
       // タイトル
-      json["title"],
+      title,
       // 完了状態
       false,
       // 作成日時

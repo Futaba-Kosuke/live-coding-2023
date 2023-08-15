@@ -10,6 +10,11 @@
     <ul id="task-list">
     </ul>
 
+    <form id="new-task-form">
+      <input type="text" name="title" placeholder="新規タスク名">
+      <button id="new-task-create-button" type="button">新規タスク作成</button>
+    </form>
+
     <script>
       // 開始時に実行する
       window.onload = async () => {
@@ -19,6 +24,26 @@
           for (const task of json["tasks"]) {
             document.getElementById("task-list").innerHTML += `<a href="/task.html?task_id=${task["id"]}"><li>[${task["id"]}] ${task["title"]} ${task["completed"] ? "完了済" : "未完了"}</li></a>`
           }
+        }
+      }
+
+      document.getElementById("new-task-create-button").onclick = async (event) => {
+        const newTaskFrom = document.getElementById("new-task-form")
+
+        const formData = new FormData(newTaskFrom)
+        const data = Object.fromEntries(formData.entries())
+
+        try {
+          await fetch("http://localhost:8000/create", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify(data)
+          })
+          window.location.reload()
+        } catch (e) {
+          console.log("ERROR: " + e)
         }
       }
     </script>
