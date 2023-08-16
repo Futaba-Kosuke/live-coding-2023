@@ -6,26 +6,26 @@ import { getTaskList, getTaskById, insertTask, updateTask } from "./mySqlConnect
 const optionsResult = (message, status = 200) => {
   return new Response(message, { status: status, headers: {
     "Access-Control-Allow-Methods": "POST",
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": "http://localhost:3000",
     "Access-Control-Allow-Headers": "*"
   }})
 }
 
 const postResult = (message, status = 200) => {
   return new Response(message, { status: status, headers: {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": "http://localhost:3000",
   }})
 }
 
 const messageToResult = (message, status = 200) => {
   return new Response(message, { status: status, headers: {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": "http://localhost:3000",
   }})
 }
 
 const jsonToResult = (json, status = 200) => {
   return new Response(JSON.stringify(json), { status: status, headers: {
-    "Access-Control-Allow-Origin": "*"
+    "Access-Control-Allow-Origin": "http://localhost:3000"
   }})
 }
 
